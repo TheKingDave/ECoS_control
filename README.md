@@ -1,3 +1,5 @@
+## In active development, not ready for use
+
 # ECoS Control
 
 A hand controller for the ECoS station
