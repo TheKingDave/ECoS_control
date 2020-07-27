@@ -1,6 +1,6 @@
-import 'package:ecos_control/DemoTrainControl.dart';
-import 'package:ecos_control/consts.dart';
-import 'package:ecos_control/trainFunctions.dart';
+import 'consts.dart';
+import 'train/demoTrainControl.dart';
+import 'train/trainFunctions.dart';
 import 'package:flutter/material.dart';
 
 void main() {

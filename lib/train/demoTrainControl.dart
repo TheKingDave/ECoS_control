@@ -1,6 +1,6 @@
-import 'package:ecos_control/trainControlDisplay.dart';
 import 'package:flutter/cupertino.dart';
-import 'consts.dart';
+import '../consts.dart';
+import 'trainControlDisplay.dart';
 
 class DemoTrainControl extends StatefulWidget {
   final int number;

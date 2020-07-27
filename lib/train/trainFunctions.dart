@@ -1,4 +1,4 @@
-import 'package:ecos_control/trainFunction.dart';
+import 'trainFunction.dart';
 import 'package:flutter/cupertino.dart';
 
 class TrainFunctions extends StatefulWidget {
