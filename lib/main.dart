@@ -1,8 +1,6 @@
 import 'package:ecos_control/DemoTrainControl.dart';
 import 'package:ecos_control/consts.dart';
-import 'package:ecos_control/main_navigation.dart';
-import 'package:ecos_control/switchIcon.dart';
-import 'package:ecos_control/trainControlDisplay.dart';
+import 'package:ecos_control/trainFunctions.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MaterialColor swatch = Colors.blue;
-    
+
     return MaterialApp(
       title: 'ECoS Control',
       theme: ThemeData(
@@ -49,20 +47,15 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
   final List<Tab> _tabs = <Tab>[
     Tab(text: 'Trains', icon: Icon(Icons.train)),
     Tab(text: 'Switches', icon: Icon(Icons.call_split)),
   ];
-  
+
   TabController _tabController;
 
-  void _onItemTap(int index) {
-    setState(() {
-      
-    });
-  }
-  
   @override
   void initState() {
     super.initState();
@@ -87,28 +80,32 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: _tabs.map((Tab tab) {
-                  final String label = tab.text.toLowerCase();
-                  return Center(
-                    child: Text('This is $label tab'),
-                  );
-                }).toList(),
+                children: [
+                  TrainFunctions(),
+                  Center(child: Text('Switches'))
+                ],
               ),
             ),
-            DemoTrainControl(
-              number: 24,
-              protocol: "DCC 128",
-              name: "Schnelli",
-              speed: 28,
-              maxSpeed: 128,
-              direction: Direction.forward,
+            Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(
+                          color: Theme.of(context).highlightColor, width: 2))),
+              child: DemoTrainControl(
+                number: 24,
+                protocol: "DCC 128",
+                name: "Schnelli",
+                speed: 28,
+                maxSpeed: 128,
+                direction: Direction.forward,
+              ),
             )
           ],
         ),
       ),
     );
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
