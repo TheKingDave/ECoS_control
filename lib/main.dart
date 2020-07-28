@@ -1,5 +1,6 @@
 import 'package:ecos_control/connectedScreen.dart';
 import 'package:ecos_control/switches/switches.dart';
+import 'package:ecos_control/unconnectedScreen.dart';
 
 import 'consts.dart';
 import 'train/demoTrainControl.dart';
@@ -53,6 +54,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    return ConnectedScreen("Kirchberg"); 
+    return UnconnectedScreen(); 
   }
 }
