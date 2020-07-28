@@ -15,14 +15,6 @@ class _TrainFunctionState extends State<TrainFunctions> {
     4: TrainFunction(number: 4, description: 8),
     5: TrainFunction(number: 5, description: 36),
   };
-  
-  @override
-  initState() {
-    super.initState();
-    for(int i = 6; i < 32; i++) {
-      _states[i] = TrainFunction(number: i, description: 2);
-    }
-  }
 
   Function switchFunction(int index) {
     return () => {

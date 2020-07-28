@@ -1,3 +1,5 @@
+import 'package:ecos_control/switches/switches.dart';
+
 import 'consts.dart';
 import 'train/demoTrainControl.dart';
 import 'train/trainFunctions.dart';
@@ -82,7 +84,7 @@ class _MainPageState extends State<MainPage>
                 controller: _tabController,
                 children: [
                   TrainFunctions(),
-                  Center(child: Text('Switches'))
+                  Switches(),
                 ],
               ),
             ),
