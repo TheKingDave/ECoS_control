@@ -37,15 +37,13 @@ class MyApp extends StatelessWidget {
         accentColor: swatch[500],
       ),
       themeMode: ThemeMode.dark,
-      home: MainPage(title: 'ECoS Control'),
+      home: MainPage(),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  MainPage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MainPage({Key key}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -54,6 +52,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    return UnconnectedScreen(); 
+    return UnconnectedScreen();
   }
 }

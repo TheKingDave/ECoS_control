@@ -1,3 +1,5 @@
+import 'package:ecos_control/stationView.dart';
+
 import 'station/stationDisplay.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +91,11 @@ class _UnconnectedScreenState extends State<UnconnectedScreen> {
             children: _stations
                 .map((station) => StationDisplay(
                       station,
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => StationView(station),
+                        ));
+                      },
                       onRemove: () => _removeStation(station),
                     ))
                 .toList(),

@@ -1,63 +1,84 @@
-import 'package:ecos_control/switches/switchIcon.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
-class Switch {
-  final int number;
-  final List<String> description;
-  final bool red;
+import '../network/stationObject.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
-  Switch({this.number, this.description, this.red});
-
-  Switch switchs() {
-    return copyWith(red: !red);
-  }
-
-  Switch copyWith({int number, List<String> description, bool red}) {
-    return Switch(
-        number: number ?? this.number,
-        description: description ?? this.description,
-        red: red ?? this.red);
-  }
+enum SwitchMode {
+  SWITCH,
+  PULSE,
 }
 
-class SwitchDisplay extends StatelessWidget {
-  final Switch state;
-  final Function() switchFunction;
+class Switch extends StationObject {
+  int address;
+  List<String> description;
+  bool state;
+  SwitchMode mode;
 
-  SwitchDisplay(this.state, this.switchFunction);
+  Switch(
+      {this.address = -1,
+      List<String> description,
+      this.state = false,
+      this.mode = SwitchMode.SWITCH}): description = description ?? List(3);
+
+  Switch switchs() {
+    return copyWith(state: !state);
+  }
+  
+  String getSwitchedState() {
+    return _boolToString(!state);
+  }
+
+  Switch copyWith(
+      {int address, List<String> description, bool state, SwitchMode mode}) {
+    return Switch(
+        address: address ?? this.address,
+        description: description ?? this.description,
+        state: state ?? this.state,
+        mode: mode ?? this.mode);
+  }
+  
+  String _boolToString(bool _bool) {
+    return (_bool ? 1 : 0).toString();
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1,
-          child: Container(
-            decoration: BoxDecoration(
-                color: state.red ? Colors.red[800] : Colors.green[700],
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: switchFunction,
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: SwitchIcon(turned: state.red),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Container(padding: EdgeInsets.only(bottom: 8)),
-        Text(
-          state.description.join('\n').trim(),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
+  List<String> get options =>
+      ['state', 'addr', 'name1', 'name2', 'name3', 'mode'];
+
+  @override
+  String getOption(String name) {
+    if (name.startsWith('name')) {
+      final index = int.parse(name.substring(name.length - 1));
+      return description[index];
+    }
+    switch (name) {
+      case 'state':
+        return _boolToString(state);
+      case 'addr':
+        return address.toString();
+      case 'mode':
+        return EnumToString.parse(mode);
+    }
+    return null;
+  }
+
+  @override
+  void setOption(String name, String value) {
+    if (name.startsWith('name')) {
+      final index = int.parse(name.substring(name.length - 1))-1;
+      description[index] = value.substring(1, value.length-1);
+    }
+    switch (name) {
+      case 'state':
+        state = int.parse(value) == 1;
+        break;
+      case 'addr':
+        address = int.parse(value);
+        break;
+      case 'mode':
+        mode = EnumToString.fromString(SwitchMode.values, value);
+        break;
+    }
+    notifyListeners();
   }
 }

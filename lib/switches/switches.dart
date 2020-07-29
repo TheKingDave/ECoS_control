@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'switch.dart';
+import 'switchDisplay.dart';
 
 class Switches extends StatefulWidget {
   @override
@@ -9,8 +10,8 @@ class Switches extends StatefulWidget {
 
 class _SwitchesState extends State<Switches> {
   var _switches = <int, Switch>{
-    0: Switch(number: 0, red: false, description: ["Links", "Weiche", "0"]),
-    1: Switch(number: 1, red: true, description: ["Rechts", "", ""]),
+    0: Switch(address: 0, state: false, description: ["Links", "Weiche", "0"]),
+    1: Switch(address: 1, state: true, description: ["Rechts", "", ""]),
   };
   
   Function switchFunction(int index) {
@@ -30,7 +31,7 @@ class _SwitchesState extends State<Switches> {
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
       children: _switches.values
-          .map((e) => SwitchDisplay(e, switchFunction(e.number)))
+          .map((e) => SwitchDisplay(e, switchFunction(e.address)))
           .toList(),
     );
   }
