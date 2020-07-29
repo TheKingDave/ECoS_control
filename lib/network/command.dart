@@ -7,7 +7,7 @@ class Command {
 
   Command({this.type, this.id, this.parameters = const []});
 
-  static final _commandRegex = RegExp('^(\\w+)\\((\\d+), (.*)\\)\$');
+  static final _commandRegex = RegExp('^(\\w+)\\((\\d+)(?:, (.*))?\\)\$');
 
   factory Command.fromString(String str) {
     final matches = _commandRegex.firstMatch(str);

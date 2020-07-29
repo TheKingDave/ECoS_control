@@ -25,6 +25,10 @@ class Connection {
     _socket.listen(_rawDataHandler, onError: errorHandler, onDone: dispose);
   }
 
+  void initData() async {
+    sendCommand('queryObjects', 11);
+  }
+
   void sendCommand(String command, int id,
       [List<Parameter> parameters = const []]) {
     var paramString = parameters.map((p) => p.toString()).join(',');
@@ -65,9 +69,31 @@ class Connection {
       return;
     }
 
+    if (message.type == 'REPLY' &&
+        message.furtherInfo.startsWith('queryObjects')) {
+      final cmd = Command.fromString(message.furtherInfo);
+      if (cmd.id == 11) {
+        message.lines.forEach((s) {
+          int id = int.parse(s.trim());
+          if(id >= 30000) return;
+          sendCommand('get', id, [
+            Parameter('addr'),
+            Parameter('name1'),
+            Parameter('name2'),
+            Parameter('name3'),
+            Parameter('state'),
+            Parameter('mode'),
+          ]);
+          sendCommand('request', id, [Parameter('view')]);
+        });
+      }
+      return;
+    }
+
     if (message.type == 'REPLY' && message.furtherInfo.startsWith('set')) {
       final cmd = Command.fromString(message.furtherInfo);
-      cmd.parameters.forEach((p) => _state.setObjectOption(cmd.id, p.name, p.value));
+      cmd.parameters
+          .forEach((p) => _state.setObjectOption(cmd.id, p.name, p.value));
       return;
     }
 

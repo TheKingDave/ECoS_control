@@ -1,5 +1,3 @@
-import 'network/stationObject.dart';
-
 import 'network/parameter.dart';
 import 'switches/switchDisplay.dart';
 import 'switches/switch.dart' as sw;
@@ -42,16 +40,7 @@ class _StationViewState extends State<StationView> {
 
   void _send() async {
     await _connection.connect();
-    print(Parameter.parameterListFromString('state[0], name1["test,"""], name2["hallo"]'));
-    _connection.sendCommand('get', 20020, [
-      Parameter('state'),
-      Parameter('addr'),
-      Parameter('name1'),
-      Parameter('name2'),
-      Parameter('name3'),
-      Parameter('mode'),
-    ]);
-    _connection.sendCommand('request', 20020, [Parameter('view')]);
+    await _connection.initData();
   }
 
   @override
@@ -63,19 +52,26 @@ class _StationViewState extends State<StationView> {
       body: ChangeNotifierProvider.value(
         value: _state,
         child: Consumer<StationState>(
-          builder: (context, station, _) => ChangeNotifierProvider.value(
-            value: station.getObject(20020),
-            child: Consumer<StationObject>(
-              builder: (context, so, _) {
-                final _switch = so as sw.Switch;
-                return SwitchDisplay(
-                    _switch,
-                    () => _connection.sendCommand('set', 20020,
-                        [Parameter('state', _switch.getSwitchedState())]));
-              },
-            ),
-          ),
-        ),
+            builder: (context, station, _) => GridView.count(
+                  padding: EdgeInsets.all(16),
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 59 / 100,
+                  crossAxisCount: 4,
+                  children: station.switches
+                      .map((s) => ChangeNotifierProvider.value(
+                          value: s,
+                          child: Consumer<sw.Switch>(
+                            builder: (context, _switch, _) => SwitchDisplay(
+                                _switch,
+                                () => _connection.sendCommand(
+                                        'set', _switch.id, [
+                                      Parameter(
+                                          'state', _switch.getSwitchedState())
+                                    ])),
+                          )))
+                      .toList(),
+                )),
       ),
     );
   }

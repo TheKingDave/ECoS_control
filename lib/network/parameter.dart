@@ -17,6 +17,7 @@ class Parameter {
   }
   
   static List<Parameter> parameterListFromString(String str) {
+    if(str == null || str.isEmpty) return [];
     List<Parameter> split = [];
 
     int lastSplit = 0;

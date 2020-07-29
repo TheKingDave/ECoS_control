@@ -9,34 +9,36 @@ enum SwitchMode {
 }
 
 class Switch extends StationObject {
+  final int id;
   int address;
   List<String> description;
   bool state;
   SwitchMode mode;
 
-  Switch(
+  Switch(this.id,
       {this.address = -1,
       List<String> description,
       this.state = false,
-      this.mode = SwitchMode.SWITCH}): description = description ?? List(3);
+      this.mode = SwitchMode.SWITCH})
+      : description = description ?? List(3);
 
   Switch switchs() {
     return copyWith(state: !state);
   }
-  
+
   String getSwitchedState() {
     return _boolToString(!state);
   }
 
   Switch copyWith(
       {int address, List<String> description, bool state, SwitchMode mode}) {
-    return Switch(
+    return Switch(id,
         address: address ?? this.address,
         description: description ?? this.description,
         state: state ?? this.state,
         mode: mode ?? this.mode);
   }
-  
+
   String _boolToString(bool _bool) {
     return (_bool ? 1 : 0).toString();
   }
@@ -65,8 +67,8 @@ class Switch extends StationObject {
   @override
   void setOption(String name, String value) {
     if (name.startsWith('name')) {
-      final index = int.parse(name.substring(name.length - 1))-1;
-      description[index] = value.substring(1, value.length-1);
+      final index = int.parse(name.substring(name.length - 1)) - 1;
+      description[index] = value.substring(1, value.length - 1);
     }
     switch (name) {
       case 'state':

@@ -10,8 +10,8 @@ class Switches extends StatefulWidget {
 
 class _SwitchesState extends State<Switches> {
   var _switches = <int, Switch>{
-    0: Switch(address: 0, state: false, description: ["Links", "Weiche", "0"]),
-    1: Switch(address: 1, state: true, description: ["Rechts", "", ""]),
+    0: Switch(20000, address: 0, state: false, description: ["Links", "Weiche", "0"]),
+    1: Switch(20001, address: 1, state: true, description: ["Rechts", "", ""]),
   };
   
   Function switchFunction(int index) {
