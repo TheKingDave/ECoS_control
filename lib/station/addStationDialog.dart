@@ -23,7 +23,7 @@ class _AddStationDialogState extends State<AddStationDialog> {
     _nameController = TextEditingController();
     _addressController = TextEditingController();
     _portController =
-        TextEditingController(text: Station.defaultPort.toString());
+        TextEditingController(text: StationInfo.defaultPort.toString());
 
     _addressFocus = FocusNode();
     _portFocus = FocusNode();
@@ -45,7 +45,7 @@ class _AddStationDialogState extends State<AddStationDialog> {
     if (!_formKey.currentState.validate()) {
       return;
     }
-    final station = Station(
+    final station = StationInfo(
         name: _nameController.text,
         address: _addressController.text,
         port: int.parse(_portController.text));

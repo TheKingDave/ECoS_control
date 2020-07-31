@@ -3,23 +3,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'command.dart';
-
-import 'parameter.dart';
-import 'stationState.dart';
-
 import 'networkEvent.dart';
 
 class Connection {
-  final StationState _state;
   final String _address;
   final int _port;
+  Function(IncomingMessage) onMessage;
 
   Stream<NetworkEvent> events;
   Socket _socket;
   IncomingMessage _incomingMessage;
 
-  Connection(this._address, this._port, this._state);
+  Connection(this._address, this._port, [this.onMessage]);
 
   void connect() async {
     _socket = await Socket.connect(_address, _port);
@@ -30,14 +25,6 @@ class Connection {
         .transform(stringTransformer)
         .transform(LineSplitter())
         .listen(_dataHandler, onError: errorHandler, onDone: dispose);
-  }
-
-  void initData() async {
-    sendCommand(Command(id: 11, type: 'queryObjects'));
-  }
-
-  void sendCommand(Command command) {
-    send(command.toString());
   }
 
   void send(String data) {
@@ -51,60 +38,11 @@ class Connection {
       _incomingMessage.header = _in;
     } else if (_in.startsWith("<")) {
       _incomingMessage.footer = _in;
-      _handleMessage(_incomingMessage);
+      onMessage(_incomingMessage);
       _incomingMessage = null;
     } else {
       _incomingMessage.addLine(_in);
     }
-  }
-
-  static final _dataRegex = RegExp('^(\\d+) (\\w+)\\[(.+)]\$');
-
-  void _handleMessage(IncomingMessage message) {
-    if (message.status != 0) {
-      print(
-          'Message has non 0 zero staus: ${message.status} ${message.statusMessage}');
-      return;
-    }
-
-    if (message.type == 'REPLY' &&
-        message.furtherInfo.startsWith('queryObjects')) {
-      final cmd = Command.fromString(message.furtherInfo);
-      if (cmd.id == 11) {
-        message.lines.forEach((s) {
-          int id = int.parse(s.trim());
-          if (id >= 30000) return;
-          sendCommand(Command(type: 'get', id: id, parameters: [
-            Parameter('addr'),
-            Parameter('name1'),
-            Parameter('name2'),
-            Parameter('name3'),
-            Parameter('state'),
-            Parameter('mode'),
-          ]));
-          sendCommand(Command(
-              type: 'request', id: id, parameters: [Parameter('view')]));
-        });
-      }
-      return;
-    }
-
-    if (message.type == 'REPLY' && message.furtherInfo.startsWith('set')) {
-      final cmd = Command.fromString(message.furtherInfo);
-      cmd.parameters
-          .forEach((p) => _state.setObjectOption(cmd.id, p.name, p.value));
-      return;
-    }
-
-    message.lines.forEach((line) {
-      final matches = _dataRegex.firstMatch(line);
-      if (matches == null) {
-        print('Could not find matches for "$line"');
-        return;
-      }
-      _state.setObjectOption(
-          int.parse(matches.group(1)), matches.group(2), matches.group(3));
-    });
   }
 
   void errorHandler(error, StackTrace trace) {

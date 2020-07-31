@@ -1,4 +1,8 @@
+import 'network/messageHandler.dart';
+
+import 'network/command.dart';
 import 'network/parameter.dart';
+import 'network/station.dart';
 import 'switches/switchDisplay.dart';
 import 'switches/switch.dart' as sw;
 import 'package:flutter/material.dart';
@@ -11,7 +15,7 @@ import 'network/stationState.dart';
 import 'station/station.dart';
 
 class StationView extends StatefulWidget {
-  final Station station;
+  final StationInfo station;
 
   StationView(this.station);
 
@@ -20,27 +24,23 @@ class StationView extends StatefulWidget {
 }
 
 class _StationViewState extends State<StationView> {
-  Connection _connection;
-  StationState _state;
+  Station _station;
 
   @override
   void initState() {
     super.initState();
-    _state = StationState();
-    _connection =
-        Connection(widget.station.address, widget.station.port, _state);
-    _send();
+    final _state = StationState();
+    final _connection = Connection(widget.station.address, widget.station.port);
+    _station = Station(_state, _connection);
+    _connection.onMessage = MessageHandler(_station).onMessage;
+
+    _station.initData();
   }
 
   @override
   void dispose() {
-    _connection.dispose();
+    _station.dispose();
     super.dispose();
-  }
-
-  void _send() async {
-    await _connection.connect();
-    await _connection.initData();
   }
 
   @override
@@ -50,7 +50,7 @@ class _StationViewState extends State<StationView> {
         title: Text(widget.station.name),
       ),
       body: ChangeNotifierProvider.value(
-        value: _state,
+        value: _station.state,
         child: Consumer<StationState>(
             builder: (context, station, _) => GridView.count(
                   padding: EdgeInsets.all(16),
@@ -64,11 +64,13 @@ class _StationViewState extends State<StationView> {
                           child: Consumer<sw.Switch>(
                             builder: (context, _switch, _) => SwitchDisplay(
                                 _switch,
-                                () => _connection.sendCommand(
-                                        'set', _switch.id, [
-                                      Parameter(
-                                          'state', _switch.getSwitchedState())
-                                    ])),
+                                () => _station.sendCommand(Command(
+                                        type: 'set',
+                                        id: _switch.id,
+                                        parameters: [
+                                          Parameter('state',
+                                              _switch.getSwitchedState())
+                                        ]))),
                           )))
                       .toList(),
                 )),

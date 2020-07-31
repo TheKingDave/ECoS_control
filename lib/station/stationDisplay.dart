@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'station.dart';
 
 class StationDisplay extends StatelessWidget {
-  final Station _station;
+  final StationInfo _station;
   final Function() onTap;
   final Function() onRemove;
 

@@ -1,4 +1,4 @@
-import 'package:ecos_control/stationView.dart';
+import 'stationView.dart';
 
 import 'station/stationDisplay.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +14,7 @@ class UnconnectedScreen extends StatefulWidget {
 
 class _UnconnectedScreenState extends State<UnconnectedScreen> {
   static const _stationsKey = 'stations';
-  var _stations = <Station>[];
+  var _stations = <StationInfo>[];
   Future<SharedPreferences> _prefs;
   BuildContext _context;
 
@@ -27,11 +27,11 @@ class _UnconnectedScreenState extends State<UnconnectedScreen> {
 
   void _getStations() async {
     final list = await (await _prefs).getStringList(_stationsKey);
-    final s = <Station>[];
+    final s = <StationInfo>[];
     var couldLoadALl = true;
     list.forEach((element) {
       try {
-        s.add(Station.fromString(element));
+        s.add(StationInfo.fromString(element));
       } on Exception catch (e) {
         // Ignore, just dont use
         couldLoadALl = false;
@@ -54,14 +54,14 @@ class _UnconnectedScreenState extends State<UnconnectedScreen> {
         _stationsKey, _stations.map((s) => s.toString()).toList());
   }
 
-  void _addStation(Station station) async {
+  void _addStation(StationInfo station) async {
     setState(() {
       _stations.add(station);
     });
     _saveStations();
   }
 
-  void _removeStation(Station station) async {
+  void _removeStation(StationInfo station) async {
     setState(() {
       _stations.remove(station);
     });
@@ -76,7 +76,7 @@ class _UnconnectedScreenState extends State<UnconnectedScreen> {
           child: Icon(Icons.add),
           onPressed: () async {
             final station =
-                await Navigator.of(context).push<Station>(MaterialPageRoute(
+                await Navigator.of(context).push<StationInfo>(MaterialPageRoute(
               builder: (context) => AddStationDialog(),
               fullscreenDialog: true,
             ));
