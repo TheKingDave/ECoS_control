@@ -45,7 +45,7 @@ class Connection {
   }
 
   void _dataHandler(String _in) {
-    //gitprint(_in);
+    //print(_in);
     if (_incomingMessage == null) {
       _incomingMessage = IncomingMessage();
       _incomingMessage.header = _in;

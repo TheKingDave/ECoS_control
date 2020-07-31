@@ -29,7 +29,9 @@ class Command {
   
   @override
   String toString() {
-    return 'Command{type: $type, id: $id, parameters: $parameters}';
+    var paramString = parameters.map((p) => p.toString()).join(',');
+    paramString = paramString.isEmpty ? '' : ', $paramString';
+    return '$type($id$paramString)';
   }
 
   Command copyWith({
