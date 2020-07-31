@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ecos_control/network/command.dart';
+import 'command.dart';
 
 import 'parameter.dart';
 import 'stationState.dart';
@@ -22,32 +23,29 @@ class Connection {
 
   void connect() async {
     _socket = await Socket.connect(_address, _port);
-    _socket.listen(_rawDataHandler, onError: errorHandler, onDone: dispose);
+    final stringTransformer = StreamTransformer<Uint8List, String>.fromHandlers(
+        handleData: (Uint8List data, EventSink sink) =>
+            sink.add(String.fromCharCodes(data)));
+    _socket
+        .transform(stringTransformer)
+        .transform(LineSplitter())
+        .listen(_dataHandler, onError: errorHandler, onDone: dispose);
   }
 
   void initData() async {
-    sendCommand('queryObjects', 11);
+    sendCommand(Command(id: 11, type: 'queryObjects'));
   }
 
-  void sendCommand(String command, int id,
-      [List<Parameter> parameters = const []]) {
-    var paramString = parameters.map((p) => p.toString()).join(',');
-    paramString = paramString.isEmpty ? '' : ', $paramString';
-    send('$command($id$paramString)');
+  void sendCommand(Command command) {
+    send(command.toString());
   }
 
   void send(String data) {
     _socket.write('$data\n');
   }
 
-  void _rawDataHandler(Uint8List data) {
-    final _data = String.fromCharCodes(data).trim();
-    final lines = _data.split('\r\n');
-    lines.forEach((l) => _dataHandler(l));
-  }
-
   void _dataHandler(String _in) {
-    print(_in);
+    //gitprint(_in);
     if (_incomingMessage == null) {
       _incomingMessage = IncomingMessage();
       _incomingMessage.header = _in;
@@ -75,16 +73,17 @@ class Connection {
       if (cmd.id == 11) {
         message.lines.forEach((s) {
           int id = int.parse(s.trim());
-          if(id >= 30000) return;
-          sendCommand('get', id, [
+          if (id >= 30000) return;
+          sendCommand(Command(type: 'get', id: id, parameters: [
             Parameter('addr'),
             Parameter('name1'),
             Parameter('name2'),
             Parameter('name3'),
             Parameter('state'),
             Parameter('mode'),
-          ]);
-          sendCommand('request', id, [Parameter('view')]);
+          ]));
+          sendCommand(Command(
+              type: 'request', id: id, parameters: [Parameter('view')]));
         });
       }
       return;
