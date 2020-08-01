@@ -2,7 +2,7 @@ import 'network/messageHandler.dart';
 
 import 'network/command.dart';
 import 'network/parameter.dart';
-import 'network/station.dart';
+import 'network/stationManager.dart';
 import 'switches/switchDisplay.dart';
 import 'switches/switch.dart' as sw;
 import 'package:flutter/material.dart';
@@ -24,15 +24,19 @@ class StationView extends StatefulWidget {
 }
 
 class _StationViewState extends State<StationView> {
-  Station _station;
+  StationManager _station;
 
   @override
   void initState() {
     super.initState();
     final _state = StationState();
-    final _connection = Connection(widget.station.address, widget.station.port);
-    _station = Station(_state, _connection);
-    _connection.onMessage = MessageHandler(_station).onMessage;
+    if (widget.station.address == 'debug' && widget.station.port == 45227) {
+      _station = DebugStationManager(_state);
+    } else {
+      final _connection =
+          Connection(widget.station.address, widget.station.port);
+      _station = StationManager(_state, _connection);
+    }
 
     _station.initData();
   }

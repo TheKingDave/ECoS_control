@@ -1,11 +1,11 @@
-import 'station.dart';
+import 'stationManager.dart';
 import 'connection.dart';
 
 import 'command.dart';
 import 'parameter.dart';
 
 class MessageHandler {
-  final Station _station;
+  final StationManager _station;
   
   MessageHandler(this._station);
   
