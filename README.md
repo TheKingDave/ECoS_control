@@ -4,6 +4,10 @@
 
 A hand controller for the ECoS station
 
+### Debug Mode
+Station name = debug
+Station port = 45227 // letterToNumber(debug)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
