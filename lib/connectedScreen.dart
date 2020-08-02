@@ -31,43 +31,47 @@ class _ConnectedScreenState extends State<ConnectedScreen> with SingleTickerProv
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.ecosName),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: _tabs,
+    return WillPopScope(
+      onWillPop: () async => true,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(widget.ecosName),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: _tabs,
+          ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  TrainFunctions(),
-                  Switches(),
-                ],
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    TrainFunctions(),
+                    Switches(),
+                  ],
+                ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(
-                          color: Theme.of(context).highlightColor, width: 2))),
-              child: DemoTrainControl(
-                number: 24,
-                protocol: "DCC 128",
-                name: "Schnelli",
-                speed: 28,
-                maxSpeed: 128,
-                direction: Direction.forward,
-              ),
-            )
-          ],
+              Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        top: BorderSide(
+                            color: Theme.of(context).highlightColor, width: 2))),
+                child: DemoTrainControl(
+                  number: 24,
+                  protocol: "DCC 128",
+                  name: "Schnelli",
+                  speed: 28,
+                  maxSpeed: 128,
+                  direction: Direction.forward,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -78,4 +82,5 @@ class _ConnectedScreenState extends State<ConnectedScreen> with SingleTickerProv
     _tabController.dispose();
     super.dispose();
   }
+  
 }

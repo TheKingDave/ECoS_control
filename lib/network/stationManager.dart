@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import 'parameter.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,11 +24,17 @@ class StationManager with ChangeNotifier {
     connection.send(command.toString());
   }
 
+  void setSwitchState(int id, String state) {
+    sendCommand(
+        Command(type: 'set', id: id, parameters: [Parameter('state', state)]));
+  }
+
   @override
   void dispose() {
     connection?.dispose();
     super.dispose();
   }
+  
 }
 
 class DebugStationManager extends StationManager {

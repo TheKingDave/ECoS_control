@@ -1,10 +1,5 @@
-import 'network/messageHandler.dart';
-
-import 'network/command.dart';
-import 'network/parameter.dart';
+import 'connectedScreen.dart';
 import 'network/stationManager.dart';
-import 'switches/switchDisplay.dart';
-import 'switches/switch.dart' as sw;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,36 +44,12 @@ class _StationViewState extends State<StationView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.station.name),
-      ),
-      body: ChangeNotifierProvider.value(
-        value: _station.state,
-        child: Consumer<StationState>(
-            builder: (context, station, _) => GridView.count(
-                  padding: EdgeInsets.all(16),
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 59 / 100,
-                  crossAxisCount: 4,
-                  children: station.switches
-                      .map((s) => ChangeNotifierProvider.value(
-                          value: s,
-                          child: Consumer<sw.Switch>(
-                            builder: (context, _switch, _) => SwitchDisplay(
-                                _switch,
-                                () => _station.sendCommand(Command(
-                                        type: 'set',
-                                        id: _switch.id,
-                                        parameters: [
-                                          Parameter('state',
-                                              _switch.getSwitchedState())
-                                        ]))),
-                          )))
-                      .toList(),
-                )),
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: _station),
+        ChangeNotifierProvider.value(value: _station.state),
+      ],
+      child: ConnectedScreen(widget.station.name),
     );
   }
 }

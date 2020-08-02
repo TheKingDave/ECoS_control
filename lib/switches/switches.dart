@@ -1,37 +1,33 @@
-import 'package:flutter/cupertino.dart';
+import '../network/stationState.dart';
 
 import 'switch.dart';
+
+import '../network/stationManager.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+
 import 'switchDisplay.dart';
 
-class Switches extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _SwitchesState();
-}
-
-class _SwitchesState extends State<Switches> {
-  var _switches = <int, Switch>{
-    0: Switch(20000, address: 0, state: false, description: ["Links", "Weiche", "0"]),
-    1: Switch(20001, address: 1, state: true, description: ["Rechts", "", ""]),
-  };
-  
-  Function switchFunction(int index) {
-    return () => {
-          setState(() {
-            _switches[index] = _switches[index].switchs();
-          })
-        };
-  }
-
+class Switches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final sm = Provider.of<StationManager>(context, listen: false);
+    final state = Provider.of<StationState>(context);
+
     return GridView.count(
-      childAspectRatio: 59/100,
+      childAspectRatio: 59 / 100,
       crossAxisCount: 4,
       padding: EdgeInsets.all(16),
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
-      children: _switches.values
-          .map((e) => SwitchDisplay(e, switchFunction(e.address)))
+      children: state.switches
+          .map((s) => ChangeNotifierProvider.value(
+              value: s,
+              child: Consumer<Switch>(
+                  builder: (context, sw, _) => SwitchDisplay(
+                      sw,
+                      () =>
+                          {sm.setSwitchState(sw.id, sw.getSwitchedState())}))))
           .toList(),
     );
   }

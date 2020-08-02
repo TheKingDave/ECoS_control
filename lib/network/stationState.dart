@@ -13,6 +13,8 @@ class StationState with ChangeNotifier {
         .map((e) => e.value as Switch)
         .toList();
   }
+  
+  
 
   StationState() : _objects = {};
 
