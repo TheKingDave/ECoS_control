@@ -6,18 +6,28 @@ class TrainFunctionState with ChangeNotifier {
   bool moment;
   bool on;
 
-  TrainFunctionState(this.number, this.description, this.moment, this.on);
+  TrainFunctionState(this.number, {this.description, this.moment, this.on});
 
-  void update(String value) {
-    
+  void updateOn(String on) {
+    this.on = on == '1';
+    this.notifyListeners();
   }
-  
+
+  void updateDescription(String desc) {
+    this.description = int.parse(desc);
+    this.notifyListeners();
+  }
+
   String get onStr {
     return on ? '1' : '0';
+  }
+  
+  String get notOnStr {
+    return on ? '0' : '1';
   }
 
   @override
   String toString() {
-    return 'func[$number, $onStr]';
+    return 'TrainFunctionState{number: $number, description: $description, moment: $moment, on: $on}';
   }
 }

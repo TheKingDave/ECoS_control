@@ -1,5 +1,7 @@
+import 'package:ecos_control/train/trainState.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../consts.dart';
 import 'parameter.dart';
 import 'package:flutter/foundation.dart';
 
@@ -29,12 +31,33 @@ class StationManager with ChangeNotifier {
         Command(type: 'set', id: id, parameters: [Parameter('state', state)]));
   }
 
+  void setTrainDirection(int id, Direction direction) {
+    sendCommand(Command(
+        type: 'set',
+        id: id,
+        parameters: [Parameter('dir', TrainState.dirToParam(direction))]));
+  }
+
+  void setTrainSpeed(int id, int speed) {
+    sendCommand(Command(
+        type: 'set',
+        id: id,
+        parameters: [Parameter('speedstep', speed.toString())]));
+  }
+  
+  void setTrainFunctionState(int id, int function, String state) {
+    sendCommand(Command(
+      type: 'set',
+      id: id,
+      parameters: [Parameter('func', '$function,$state')],
+    ));
+  }
+
   @override
   void dispose() {
     connection?.dispose();
     super.dispose();
   }
-  
 }
 
 class DebugStationManager extends StationManager {
@@ -45,6 +68,21 @@ class DebugStationManager extends StationManager {
     for (int i = 0; i < 10; i++) {
       sendCommand(_createDebugSwitch(i));
     }
+    sendCommand(Command(type: 'set', id: 1007, parameters: [
+      Parameter('addr', '3'),
+      Parameter('protocol', 'DCC128'),
+      Parameter('name', 'Taurus ÖBB'),
+      Parameter('symbol', '30'),
+      Parameter('dir', '1'),
+      Parameter('speedstep', '12'),
+    ]));
+    
+    sendCommand(Command(type: 'set', id: 1007, parameters: [
+      Parameter('func', '0,0'),
+      Parameter('funcdesc', '0,3'),
+      Parameter('func', '1,0'),
+      Parameter('funcdesc', '1,32'),
+    ]));
   }
 
   Command _createDebugSwitch(int addr) {
@@ -59,6 +97,7 @@ class DebugStationManager extends StationManager {
 
   @override
   void sendCommand(Command command) {
+    print('sendCommand($command)');
     if (command.type == 'set') {
       for (Parameter p in command.parameters) {
         state.setObjectOption(command.id, p.name, p.value);

@@ -2,21 +2,13 @@
 
 # ECoS Control
 
-A hand controller for the ECoS station
+A mobile phone hand controller for the [ECoS](http://www.esu.eu/en/products/digital-control/ecos-50210-dcc-system/what-ecos-can-do/) station.  
+It is somewhat leaned on the [Mobile Control II](http://www.esu.eu/en/products/digital-control/mobile-control-ii/).  
+I started the project before I knew about Mobile Control II.
 
-### Debug Mode
-Station name = debug
-Station port = 45227 // letterToNumber(debug)
+### Test Mode
+If you want to test the interface you can test it in the Testing/Debug mode.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Station name = debug  
+Station port = 45227

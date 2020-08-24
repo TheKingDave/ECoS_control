@@ -1,10 +1,5 @@
-import 'package:ecos_control/connectedScreen.dart';
-import 'package:ecos_control/switches/switches.dart';
-import 'package:ecos_control/unconnectedScreen.dart';
+import 'unconnectedScreen.dart';
 
-import 'consts.dart';
-import 'train/demoTrainControl.dart';
-import 'train/trainFunctions.dart';
 import 'package:flutter/material.dart';
 
 void main() {

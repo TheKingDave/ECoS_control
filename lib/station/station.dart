@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 class StationInfo {
   static const int defaultPort = 15471;
   final String name;

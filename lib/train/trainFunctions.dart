@@ -1,5 +1,11 @@
+import '../network/stationManager.dart';
+import 'trainFunctionState.dart';
+
+import 'trainState.dart';
+import 'package:flutter/material.dart';
+
 import 'trainFunction.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class TrainFunctions extends StatefulWidget {
   @override
@@ -7,34 +13,29 @@ class TrainFunctions extends StatefulWidget {
 }
 
 class _TrainFunctionState extends State<TrainFunctions> {
-  var _states = <int, TrainFunction>{
-    0: TrainFunction(id: 0, description: 3, on: true),
-    1: TrainFunction(id: 1, description: 4),
-    2: TrainFunction(id: 2, description: 5),
-    3: TrainFunction(id: 3, description: 7),
-    4: TrainFunction(id: 4, description: 8),
-    5: TrainFunction(id: 5, description: 36),
-  };
-
-  Function switchFunction(int index) {
-    return () => {
-          setState(() {
-            _states[index] = _states[index].switchOn();
-          })
-        };
-  }
-
   @override
   Widget build(BuildContext context) {
+    final manager = context.watch<StationManager>();
+    final train = context.watch<TrainState>();
+
+    if (train == null) {
+      return Container();
+    }
+
+    switchFunction(TrainFunctionState _switch) {
+      return () => manager.setTrainFunctionState(
+          train.id, _switch.number, _switch.notOnStr);
+    }
+
     return GridView.count(
-      padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         crossAxisCount: 4,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        children: _states.values
+        children: train.trainFunctions
             .map((fun) => TrainFunctionDisplay(
                   state: fun,
-                  switchFunction: switchFunction(fun.id),
+                  switchFunction: switchFunction(fun),
                 ))
             .toList());
   }

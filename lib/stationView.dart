@@ -48,6 +48,7 @@ class _StationViewState extends State<StationView> {
       providers: [
         ChangeNotifierProvider.value(value: _station),
         ChangeNotifierProvider.value(value: _station.state),
+        ChangeNotifierProvider.value(value: _station.state.selectedTrain),
       ],
       child: ConnectedScreen(widget.station.name),
     );

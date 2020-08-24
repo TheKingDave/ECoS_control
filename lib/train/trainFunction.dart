@@ -1,30 +1,9 @@
+import 'trainFunctionState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TrainFunction {
-  final int id;
-  final int description;
-  final bool moment;
-  final bool on;
-
-  TrainFunction({this.id, this.description, this.moment = false, this.on = false});
-  
-  TrainFunction switchOn() {
-    return copyWith(on: !on);
-  }
-  
-  TrainFunction copyWith({int number, int description, bool moment, bool on}) {
-    return TrainFunction(
-      id: number ?? this.id,
-      description: description ?? this.description,
-      moment: moment ?? this.moment,
-      on: on ?? this.on,
-    );
-  }
-}
-
 class TrainFunctionDisplay extends StatelessWidget {
-  final TrainFunction state;
+  final TrainFunctionState state;
   final Function() switchFunction;
 
   TrainFunctionDisplay({this.state, this.switchFunction});
@@ -54,7 +33,7 @@ class TrainFunctionDisplay extends StatelessWidget {
                     )),
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: Text('${state.id}'),
+                  child: Text('${state.number}'),
                 )
               ],
             ),
