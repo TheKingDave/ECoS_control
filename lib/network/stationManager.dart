@@ -1,5 +1,4 @@
-import 'package:ecos_control/train/trainState.dart';
-import 'package:flutter/cupertino.dart';
+import '../train/trainState.dart';
 
 import '../consts.dart';
 import 'parameter.dart';

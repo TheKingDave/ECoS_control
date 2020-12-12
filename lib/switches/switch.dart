@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../network/stationObject.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 

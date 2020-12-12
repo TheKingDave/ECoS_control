@@ -105,7 +105,7 @@ class _AddStationDialogState extends State<AddStationDialog> {
               controller: _portController,
               keyboardType: TextInputType.number,
               inputFormatters: [
-                WhitelistingTextInputFormatter.digitsOnly,
+                FilteringTextInputFormatter.digitsOnly,
               ],
               decoration: InputDecoration(labelText: 'Port'),
               textInputAction: TextInputAction.done,

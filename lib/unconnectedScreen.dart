@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'station/AddStationDialog.dart';
+import 'station/addStationDialog.dart';
 import 'station/station.dart';
 
 class UnconnectedScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _UnconnectedScreenState extends State<UnconnectedScreen> {
     final list = await (await _prefs).getStringList(_stationsKey);
     final s = <StationInfo>[];
     var couldLoadALl = true;
-    list.forEach((element) {
+    list?.forEach((element) {
       try {
         s.add(StationInfo.fromString(element));
       } on Exception catch (e) {
@@ -39,7 +39,7 @@ class _UnconnectedScreenState extends State<UnconnectedScreen> {
       }
     });
     if (!couldLoadALl) {
-      Scaffold.of(_context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(_context).showSnackBar(SnackBar(
         content: Text('Could not load all stations'),
         backgroundColor: Theme.of(_context).errorColor,
       ));
