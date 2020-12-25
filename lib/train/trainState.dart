@@ -1,10 +1,18 @@
+import 'dart:async';
+
+import 'package:ecos_communicator/ecos_communicator.dart';
+import '../network/argumentList.dart';
+
+import '../network/stationObject.dart';
+
 import 'trainFunctionState.dart';
 
 import '../consts.dart';
-import '../network/stationObject.dart';
 
 class TrainState extends StationObject {
+  final Connection _connection;
   final int id;
+
   int address;
   String protocol;
   String name;
@@ -13,13 +21,26 @@ class TrainState extends StationObject {
   Direction direction;
   List<TrainFunctionState> trainFunctions = [];
 
-  TrainState(this.id,
-      {this.address,
-      this.protocol,
-      this.name,
-      this.speed,
-      this.maxSpeed,
-      this.direction});
+  StreamSubscription _subscription;
+
+  TrainState(this.id, this._connection);
+
+  Future<void> initData() async {
+    final resp = await _connection.send(Request(
+        command: 'get',
+        id: id,
+        arguments: argumentListFromStringList(options)));
+    resp.entries.forEach((entry) {
+      setOptionArgument(entry.argument);
+    });
+    _subscription = _connection.getEvents(id).listen((event) {
+      setOptionArgument(event.argument);
+    });
+  }
+
+  Future<void> destroy() async {
+    await _subscription?.cancel();
+  }
 
   final List<String> options = [
     'addr',
@@ -31,20 +52,29 @@ class TrainState extends StationObject {
     'funcdesc',
   ];
 
-  static const protocolMaxSpeedMap = <String, int>{
-    'DCC28': 28,
-    'DCC128': 126,
-  };
-
-  static paramToDir(String param) =>
-      param == '0' ? Direction.forward : Direction.backward;
-
-  static dirToParam(Direction dir) => dir == Direction.forward ? '0' : '1';
-
   static final _funcRegex = RegExp('^func\\[(\\d+)\\]\$');
 
-  TrainFunctionState getFunction(int id) {
+  Future<void> setDirection(Direction dir) async {
+    final arg = Argument.native('dir', dir.number.toString());
+    await _connection.send(Request(command: 'set', id: id, arguments: {arg}));
+    setOptionArgument(arg);
+  }
+
+  Future<void> setSpeed(int speed) async {
+    final arg = Argument.native('speedstep', speed.toString());
+    setOptionArgument(arg);
+    await _connection.send(Request(command: 'set', id: id, arguments: {arg}));
+  }
+
+  Future<void> switchFunction(TrainFunctionState fs) async {
+    final arg = Argument.native('func', '${fs.number},${fs.notOnStr}');
+    await _connection.send(Request(command: 'set', id: id, arguments: {arg}));
+    setOptionArgument(arg);
+  }
+
+  TrainFunctionState getFunction(int id, {addIfNotPresent = false}) {
     return trainFunctions.firstWhere((e) => e.number == id, orElse: () {
+      if (!addIfNotPresent) return null;
       final _add = TrainFunctionState(id);
       trainFunctions.add(_add);
       return _add;
@@ -71,7 +101,7 @@ class TrainState extends StationObject {
       case 'speedstep':
         return speed.toString();
       case 'dir':
-        return dirToParam(direction);
+        return direction.number.toString();
     }
     return null;
   }
@@ -95,7 +125,7 @@ class TrainState extends StationObject {
         speed = int.parse(value);
         break;
       case 'dir':
-        direction = paramToDir(value);
+        direction = Direction.fromString(value);
         break;
       case 'func':
         final matches = _setFuncRegex.firstMatch(value);
@@ -104,7 +134,7 @@ class TrainState extends StationObject {
         }
         int id = int.parse(matches.group(1));
         String on = matches.group(2);
-        getFunction(id).updateOn(on);
+        getFunction(id, addIfNotPresent: true).updateOn(on);
         break;
       case 'funcdesc':
         final matches = _setFuncRegex.firstMatch(value);
@@ -113,7 +143,7 @@ class TrainState extends StationObject {
         }
         int id = int.parse(matches.group(1));
         String desc = matches.group(2);
-        getFunction(id).updateDescription(desc);
+        getFunction(id)?.updateDescription(desc);
         break;
     }
     if (options.contains(name)) {

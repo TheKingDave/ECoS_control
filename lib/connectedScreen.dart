@@ -52,6 +52,7 @@ class _ConnectedScreenState extends State<ConnectedScreen>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
+                    //Container(),
                     TrainScreen(),
                     Switches(),
                   ],
@@ -64,7 +65,7 @@ class _ConnectedScreenState extends State<ConnectedScreen>
                             color: Theme.of(context).highlightColor,
                             width: 2))),
                 child: TrainControl(),
-              )
+              )/**/
             ],
           ),
         ),

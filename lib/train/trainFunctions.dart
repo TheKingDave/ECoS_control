@@ -1,4 +1,3 @@
-import '../network/stationManager.dart';
 import 'trainFunctionState.dart';
 
 import 'trainState.dart';
@@ -15,16 +14,10 @@ class TrainFunctions extends StatefulWidget {
 class _TrainFunctionState extends State<TrainFunctions> {
   @override
   Widget build(BuildContext context) {
-    final manager = context.watch<StationManager>();
     final train = context.watch<TrainState>();
 
     if (train == null) {
       return Container();
-    }
-
-    switchFunction(TrainFunctionState _switch) {
-      return () => manager.setTrainFunctionState(
-          train.id, _switch.number, _switch.notOnStr);
     }
 
     return GridView.count(
@@ -35,7 +28,7 @@ class _TrainFunctionState extends State<TrainFunctions> {
         children: train.trainFunctions
             .map((fun) => TrainFunctionDisplay(
                   state: fun,
-                  switchFunction: switchFunction(fun),
+                  switchFunction: () => train.switchFunction(fun),
                 ))
             .toList());
   }
